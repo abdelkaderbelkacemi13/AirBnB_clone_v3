@@ -35,6 +35,6 @@ def get_stats():
     all_stats = {}
 
     for m_name, m_class in class_models.items():
-        all_stats[m_name] = storage.count(class_models)
+        all_stats[m_name] = storage.count(m_class)
 
     return jsonify(all_stats)

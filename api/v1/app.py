@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """The flask application API """
 
-from flask import Flask
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 import os
@@ -25,10 +25,8 @@ def not_found_404(error):
 
 
 if __name__ == "__main__":
-    apphost = os.getenv('HBNB_API_HOST', '0.0.0.0')
-    appport = os.getenv('HBNB_API_PORT', '5000')
     app.run(
         host=apphost,
-        port=appport,
+        port=int(appport),
         threaded=True
     )
