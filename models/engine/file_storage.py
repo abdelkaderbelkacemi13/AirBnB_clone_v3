@@ -73,32 +73,32 @@ class FileStorage:
         """
         Retrieves a single object from storage based on the class and its ID.
         """
-    # Check if the provided class is valid
-    if cls not in classes.values():
+        # Check if the provided class is valid
+        if cls not in classes.values():
+            return None
+
+        # Retrieve all objects of the given class from storage
+        class_obj = models.storage.all(cls)
+
+        # Iterate over the objects to find the one with the matching ID
+        for objct in class_obj.values():
+            if objct.id == id:
+                return objct
+
         return None
-
-    # Retrieve all objects of the given class from storage
-    class_obj = models.storage.all(cls)
-
-    # Iterate over the objects to find the one with the matching ID
-    for objct in class_obj.values():
-        if objct.id == id:
-            return objct
-
-    return None
 
     def count(self, cls=None):
         """
         Counts the number of objects in storage.
         """
-    if cls:
-        # If a specific class is provided, count the number of objects
-        # that are instances of that class.
-        return len(models.storage.all(cls).values())
+        if cls:
+            # If a specific class is provided, count the number of objects
+            # that are instances of that class.
+            return len(models.storage.all(cls).values())
 
-    # If no specific class is provided, count the total number of
-    # objects across all classes.
-    return sum(
-        len(models.storage.all(clas).values())
-        for clas in classes.values()
-    )
+        # If no specific class is provided, count the total number of
+        # objects across all classes.
+        return sum(
+            len(models.storage.all(clas).values())
+            for clas in classes.values()
+        )
