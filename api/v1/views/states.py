@@ -72,4 +72,4 @@ def delete_state(state_id):
     storage.delete(state)
     storage.save()
 
-    return make_response(jsonify(state.to_dict()), 200)
+    return make_response(jsonify({}), 200)
