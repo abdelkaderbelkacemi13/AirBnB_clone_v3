@@ -16,7 +16,6 @@ def close_storage(error):
     storage.close()
 
 
-
 if __name__ == "__main__":
     apphost = os.getenv('HBNB_API_HOST', '0.0.0.0')
     appport = os.getenv('HBNB_API_PORT', '5000')
