@@ -7,6 +7,8 @@ from api.v1.views import app_views
 import os
 
 app = Flask(__name__)
+apphost = os.getenv('HBNB_API_HOST', '0.0.0.0')
+appport = os.getenv('HBNB_API_PORT', '5000')
 app.register_blueprint(app_views)
 
 
