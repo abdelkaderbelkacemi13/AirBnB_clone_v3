@@ -1,32 +1,60 @@
 #!/usr/bin/python3
-"""The flask application API """
-
-from flask import Flask, jsonify
+""" Flask Application """
 from models import storage
 from api.v1.views import app_views
-import os
+from os import environ
+from flask import Flask, render_template, make_response, jsonify, request
+from flask_cors import CORS
+from flasgger import Swagger
+from flasgger.utils import swag_from
+from web_dynamic import dynamic_content
+from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
-apphost = os.getenv('HBNB_API_HOST', '0.0.0.0')
-appport = os.getenv('HBNB_API_PORT', '5000')
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.register_blueprint(app_views)
+app.register_blueprint(dynamic_content)
+cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
+toolbar = DebugToolbarExtension(app)
+
+# Your blueprint registration and other code here
 
 @app.teardown_appcontext
-def close_storage(error):
-    """Method to handel @app.teardown_appcontext"""
+def close_db(error):
+    """ Close Storage """
     storage.close()
 
+@app.before_request
+def log_request_path():
+    print(f"Accessing route: {request.path}")
 
 @app.errorhandler(404)
-def not_found_404(error):
-    """This is a handler for 404 errors"""
-    return jsonify({"error": "Not found"}), 404
+def not_found(error):
+    """ 404 Error
+    ---
+    responses:
+      404:
+        description: a resource was not found
+    """
+    print("Routes available:", app.url_map)
+
+    return make_response(jsonify({'error': "Not found"}), 404)
+
+app.config['SWAGGER'] = {
+    'title': 'AirBnB clone Restful API',
+    'uiversion': 3
+}
+
+Swagger(app)
 
 
 if __name__ == "__main__":
-    app.run(
-        host=apphost,
-        port=int(appport),
-        threaded=True
-    )
+    """ Main Function """
+    host = environ.get('HBNB_API_HOST')
+    port = environ.get('HBNB_API_PORT')
+    if not host:
+        host = '0.0.0.0'
+    if not port:
+        port = '5000'
+    app.run(host=host, port=port, debug=True, threaded=True)

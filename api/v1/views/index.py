@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""routes for the Flask API"""
-
+""" Index """
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
@@ -12,29 +11,20 @@ from api.v1.views import app_views
 from flask import jsonify
 
 
-@app_views.route('/status')
-def app_status():
-    """ get status and return a json respons"""
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
+def status():
+    """ Status of API """
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
-def get_stats():
-    """
-    get_stats is an endpoint that retrieves
-    the number of each objects by type
-    """
-    class_models = {
-            "amenities": Amenity,
-            "cities": City,
-            "places": Place,
-            "reviews": Review,
-            "states": State,
-            "users": User
-    }
-    all_stats = {}
+@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+def number_objects():
+    """ Retrieves the number of each objects by type """
+    classes = [Amenity, City, Place, Review, State, User]
+    names = ["amenities", "cities", "places", "reviews", "states", "users"]
 
-    for m_name, m_class in class_models.items():
-        all_stats[m_name] = storage.count(m_class)
+    num_objs = {}
+    for i in range(len(classes)):
+        num_objs[names[i]] = storage.count(classes[i])
 
-    return jsonify(all_stats)
+    return jsonify(num_objs)
